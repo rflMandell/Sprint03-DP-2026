@@ -62,14 +62,6 @@ git clone https://github.com/rflMandell/Sprint03-DP-2026
 python main.py
 ```
 
-### Rodar cada tarefa individualmente
-
-```bash
-python src/verificacao_recursiva.py
-python src/verificacao_memoizacao.py
-python src/otimizacao_agenda.py
-```
-
 ---
 
 ## Verificação Recursiva de Duplicidade
@@ -112,7 +104,7 @@ verificar(lead, cadastros, 0)
 
 ---
 
-## Tarefa 2 — Memoização
+## Memoização
 
 **Arquivo:** `src/verificacao_memoizacao.py`
 
