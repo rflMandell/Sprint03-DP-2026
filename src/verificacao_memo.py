@@ -83,5 +83,40 @@ class VerificadorComMemo:
 # outra maneira usando o @lru_cache
 
 @lru_cache(maxsize=1024)
-def _comparar_leads_cached(): # ainda tem q colocar os parametros
-    """a"""
+def _comparar_leads_cached(chave_lead: tuple[str, ...], chave_cadastro: tuple[str, ...],) -> Optional[str]: 
+    """
+    Compara dois leads representados como tuplas de valores
+    
+    Retorna o campo em conflito ou None.
+    Memoizada automaticamente pelo @lru_cache
+    """
+    for i, campo in enumerate(CAMPOS_CHAVE):
+        v_novo = chave_lead[i]
+        v_cad = chave_cadastro[i]
+        if v_novo and v_cad and v_novo == v_cad:
+            return campo
+    return None
+
+
+def _lead_para_tuple(lead: Lead) -> tuple[str, ...]:
+    """Converte um lead em tupla hashavel para uso com @lru_cache."""
+    return tuple(lead.get(c, "").strip().lower() for c in CAMPOS_CHAVE)
+
+
+def verificar_com_lru_cache(novo_lead: Lead, cadastros: list[Lead], indice: int=0,) -> tuple[bool, Optional[Lead]]:
+    """
+    Versao recursiva com memoizacao via @lru_cache
+    
+    Indentica em comportamento a abordagem com cache manual, porem delega o cache ao decorator nativo do python 
+    """
+    if indice >= len(cadastros):
+        return False, None
+    
+    chave_novo = _lead_para_tuple(novo_lead)
+    chave_cad = _lead_para_tuple(cadastros[indice])
+    conflito = _comparar_leads_cached(chave_novo, chave_cad)
+    
+    if conflito:
+        return True, cadastros[indice]
+    
+    return verificar_com_lru_cache(novo_lead, cadastros, indice + 1)
